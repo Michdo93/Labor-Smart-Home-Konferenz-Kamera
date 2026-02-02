@@ -5,61 +5,58 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
     exit
 }
 
-# TLS 1.2 für sichere Verbindung zu GitHub erzwingen
+# TLS 1.2 erzwingen
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 $workDir = "$env:TEMP\usbip-client"
 if (!(Test-Path $workDir)) { New-Item -ItemType Directory -Path $workDir | Out-Null }
 cd $workDir
 
-# 2. Dynamisch die aktuellste Download-URL von GitHub holen
-Write-Host "Suche aktuellste Version von usbip-win..." -ForegroundColor Cyan
-$repo = "cezanne/usbip-win"
-$releases = "https://api.github.com/repos/$repo/releases/latest"
-try {
-    $json = Invoke-RestMethod -Uri $releases
-    $zipUrl = ($json.assets | Where-Object { $_.name -like "*.zip" }).browser_download_url
-    if (!$zipUrl) { throw "Keine ZIP-Datei gefunden." }
-} catch {
-    Write-Host "Fehler beim Abrufen der Release-Infos: $($_.Exception.Message)" -ForegroundColor Red
-    pause
-    exit
-}
-
+# 2. Download der spezifischen DEV-Version
+$zipUrl = "https://github.com/cezanne/usbip-win/releases/download/v0.3.6-dev/usbip-win-0.3.6-dev.zip"
 $zipFile = "$workDir\usbip.zip"
 
-# 3. Download und Entpacken
-if (!(Test-Path "$workDir\x64")) {
-    Write-Host "Lade herunter: $zipUrl" -ForegroundColor Cyan
-    Invoke-WebRequest -Uri $zipUrl -OutFile $zipFile
-    
-    Write-Host "Entpacke Dateien..." -ForegroundColor Cyan
-    Expand-Archive -Path $zipFile -DestinationPath $workDir -Force
-    Remove-Item $zipFile
+if (!(Test-Path "$workDir\usbip-win-0.3.6-dev")) {
+    Write-Host "Lade USBIP-Client (v0.3.6-dev) herunter..." -ForegroundColor Cyan
+    try {
+        Invoke-WebRequest -Uri $zipUrl -OutFile $zipFile -ErrorAction Stop
+        Write-Host "Entpacke Dateien..." -ForegroundColor Cyan
+        Expand-Archive -Path $zipFile -DestinationPath $workDir -Force
+        Remove-Item $zipFile
+    } catch {
+        Write-Host "Fehler beim Download oder Entpacken: $($_.Exception.Message)" -ForegroundColor Red
+        pause
+        exit
+    }
 }
 
-# 4. In den x64 Ordner navigieren (Sucht rekursiv, falls Struktur abweicht)
-$exePath = Get-ChildItem -Path $workDir -Filter "usbip.exe" -Recurse | Select-Object -First 1
-if (!$exePath) {
-    Write-Host "FEHLER: usbip.exe wurde nicht gefunden!" -ForegroundColor Red
+# 3. In den x64 Ordner navigieren
+# Wir suchen rekursiv nach usbip.exe, um flexibel auf die Ordnerstruktur zu reagieren
+$exeFile = Get-ChildItem -Path $workDir -Filter "usbip.exe" -Recurse | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1
+
+if (!$exeFile) {
+    Write-Host "FEHLER: usbip.exe im x64-Ordner nicht gefunden!" -ForegroundColor Red
     pause
     exit
 }
-cd $exePath.Directory.FullName
 
-# 5. Treiber-Setup & Zertifikat
+cd $exeFile.Directory.FullName
+Write-Host "Arbeitsverzeichnis: $(Get-Location)" -ForegroundColor Gray
+
+# 4. Treiber-Setup
 Write-Host "Installiere Treiber-Zertifikat..." -ForegroundColor Cyan
 if (Test-Path ".\usbip_test.pfx") {
     Import-Certificate -FilePath .\usbip_test.pfx -CertStoreLocation Cert:\LocalMachine\TrustedPublisher -ErrorAction SilentlyContinue
 }
 
-Write-Host "Registriere virtuellen USB-Hub (Bestätigen Sie das Windows-Popup!)..." -ForegroundColor Cyan
+Write-Host "Registriere virtuellen USB-Hub..." -ForegroundColor Cyan
+# Dieser Befehl öffnet ggf. ein Windows-Sicherheits-Popup!
 .\usbip.exe install
 
-# 6. Kamera binden
-Write-Host "Verbinde Kamera von 192.168.0.231..." -ForegroundColor Green
+# 5. Verbinden
+Write-Host "Verbinde Kamera von 192.168.0.231 (Bus 1-1.2)..." -ForegroundColor Green
 .\usbip.exe attach -r 192.168.0.231 -b 1-1.2
 
-Write-Host "`nERFOLG: Die Kamera ist jetzt in Zoom/Teams sichtbar." -ForegroundColor Green
-Write-Host "WICHTIG: Dieses Fenster offen lassen!" -ForegroundColor Yellow
+Write-Host "`nERFOLG: Die Kamera ist jetzt verbunden." -ForegroundColor Green
+Write-Host "WICHTIG: Dieses Fenster nicht schließen!" -ForegroundColor Yellow
 pause
