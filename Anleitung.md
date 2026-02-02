@@ -12,9 +12,9 @@ In diesem Raum befindet sich eine Überkopf-Kamera für den Konferenztisch. Du k
 
 | Betriebssystem | Befehl (Kopieren & Einfügen) |
 | --- | --- |
-| **Windows** | `irm https://bit.ly/4ttNGds | iex` |
-| **macOS** | `curl -sSL https://bit.ly/4khnFK6 | bash` |
-| **Linux** | `curl -sSL https://bit.ly/4q9fGQv | sudo bash` |
+| **Windows** | `irm https://bit.ly/4ttNGds \| iex` |
+| **macOS** | `curl -sSL https://bit.ly/4khnFK6 \| bash` |
+| **Linux** | `curl -sSL https://bit.ly/4q9fGQv \| sudo bash` |
 
 ---
 
