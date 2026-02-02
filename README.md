@@ -15,6 +15,12 @@ Es läuft automatisch ein Server, der sich oben am Beamer befindet. Oberhalb des
 curl -sSL https://raw.githubusercontent.com/Michdo93/Labor-Smart-Home-Konferenz-Kamera/refs/heads/main/linux.sh | sudo bash
 ```
 
+Gekürzte Alternative:
+
+```
+curl -sSL https://bit.ly/4q9fGQv | sudo bash
+```
+
 Alternativ:
 
 ![QR-Code für Linux](https://github.com/Michdo93/Labor-Smart-Home-Konferenz-Kamera/blob/main/linux.png?raw=true)
@@ -27,6 +33,12 @@ In Windows musst du PowerShell als Administrator öffnen und folgenden Befehl au
 irm https://raw.githubusercontent.com/Michdo93/Labor-Smart-Home-Konferenz-Kamera/refs/heads/main/windows.ps1 | iex
 ```
 
+Gekürzte Alternative:
+
+```
+irm https://bit.ly/4ttNGds | iex
+```
+
 Alternativ:
 
 ![QR-Code für Windows](https://github.com/Michdo93/Labor-Smart-Home-Konferenz-Kamera/blob/main/windows.png?raw=true)
@@ -37,6 +49,12 @@ Dieses Skript setzt voraus, dass [Homebrew](brew.sh) installiert ist. Öffne hie
 
 ```
 curl -sSL https://raw.githubusercontent.com/Michdo93/Labor-Smart-Home-Konferenz-Kamera/refs/heads/main/mac.sh | bash
+```
+
+Gekürzte Alternative:
+
+```
+curl -sSL https://bit.ly/4khnFK6 | bash
 ```
 
 Alternativ:
