@@ -7,30 +7,36 @@ if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]:
 $workDir = "$env:TEMP\usbip-client"
 if (!(Test-Path $workDir)) { New-Item -ItemType Directory -Path $workDir }
 
-# 2. Download cezanne/usbip-win (v0.3.6 ist die stabilste portable Version)
+# 2. Download cezanne/usbip-win
 $zipUrl = "https://github.com/cezanne/usbip-win/releases/download/v0.3.6/usbip-win-0.3.6.zip"
 $zipFile = "$workDir\usbip.zip"
 
-if (!(Test-Path "$workDir\usbip.exe")) {
+if (!(Test-Path "$workDir\usbip-win-0.3.6")) {
     Write-Host "Lade USBIP-Client herunter..." -ForegroundColor Cyan
     Invoke-WebRequest -Uri $zipUrl -OutFile $zipFile
     Expand-Archive -Path $zipFile -DestinationPath $workDir -Force
 }
 
-# 3. Treiber-Zertifikat importieren & Treiber installieren
-# Das ist nötig, damit Windows den Treiber ohne Warnung akzeptiert
-Write-Host "Installiere Treiber..." -ForegroundColor Cyan
-cd $workDir
-# Zertifikat installieren (falls vorhanden)
+# 3. In den x64 Ordner wechseln (Wichtig!)
+$exeDir = "$workDir\usbip-win-0.3.6\x64"
+if (!(Test-Path $exeDir)) {
+    Write-Host "Fehler: x64 Ordner nicht gefunden!" -ForegroundColor Red
+    exit
+}
+cd $exeDir
+
+# 4. Treiber-Zertifikat importieren & Hub installieren
+Write-Host "Bereite Treiber vor..." -ForegroundColor Cyan
+# Importiert das Test-Zertifikat, damit Windows den Treiber akzeptiert
 Import-Certificate -FilePath .\usbip_test.pfx -CertStoreLocation Cert:\LocalMachine\TrustedPublisher -ErrorAction SilentlyContinue
 
-# Den virtuellen USB-Hub-Treiber installieren (einmalig nötig)
+# Installiert den virtuellen USB-Hub (Falls noch nicht geschehen)
 .\usbip.exe install
 
-# 4. Kamera vom Raspberry Pi einbinden
+# 5. Kamera verbinden
 Write-Host "Verbinde Kamera von 192.168.0.231..." -ForegroundColor Green
 .\usbip.exe attach -r 192.168.0.231 -b 1-1.2
 
-Write-Host "Fertig! Die Kamera sollte nun in Zoom erscheinen." -ForegroundColor Green
-Write-Host "Dieses Fenster nicht schließen, solange die Kamera genutzt wird!"
+Write-Host "ERFOLG: Die Kamera sollte nun in Zoom erscheinen." -ForegroundColor Green
+Write-Host "Lasse dieses Fenster offen, solange du die Kamera brauchst!"
 pause
