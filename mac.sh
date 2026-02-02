@@ -1,16 +1,16 @@
 #!/bin/bash
-# Prüfen auf Homebrew
+# 1. Homebrew Check
 if ! command -v brew &> /dev/null; then
-    echo "Homebrew nicht gefunden. Installation startet..."
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
-# Tap hinzufügen und usbip-client installieren
-brew tap clover/usbip-macos
-brew install usbip-client
+# 2. USBIP via das neue Repo installieren
+brew tap beriberikix/usbipd-mac
+brew install usbip
 
-# Laden der Kernel-Extension (erfordert ggf. Freigabe in Systemeinstellungen)
-sudo kextload /usr/local/lib/usbip-client.kext 2>/dev/null
+# 3. System Extension registrieren (Das ist der kritische Punkt!)
+echo "ACHTUNG: Bitte bestätige die Systemerweiterung in den Einstellungen!"
+sudo usbipd install-system-extension
 
-# Verbinden
+# 4. Versuch der Verbindung
 sudo usbip attach -r 192.168.0.231 -b 1-1.2
