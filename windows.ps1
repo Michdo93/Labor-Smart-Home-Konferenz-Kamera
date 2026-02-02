@@ -1,26 +1,63 @@
-# 3. Den Pfad zur usbip.exe dynamisch finden
-Write-Object "Suche nach usbip.exe in $workDir..."
-$exeFile = Get-ChildItem -Path $workDir -Filter "usbip.exe" -Recurse | Where-Object { $_.FullName -like "*x64*" } | Select-Object -First 1
-
-if (!$exeFile) {
-    Write-Host "FEHLER: usbip.exe wurde nicht gefunden!" -ForegroundColor Red
-    Write-Host "Inhalt von $workDir :"
-    Get-ChildItem -Path $workDir -Recurse | Select-Object FullName
+# 1. Admin-Check
+if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    Write-Host "!!! BITTE ALS ADMINISTRATOR STARTEN !!!" -ForegroundColor Red -BackgroundColor Black
     pause
     exit
 }
 
-# Wechsle in das Verzeichnis der gefundenen .exe
-$exeDir = $exeFile.Directory.FullName
-cd $exeDir
-Write-Host "Gefunden in: $exeDir" -ForegroundColor Gray
+# TLS 1.2 erzwingen
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+
+$workDir = "$env:TEMP\usbip-client"
+if (!(Test-Path $workDir)) { New-Item -ItemType Directory -Path $workDir | Out-Null }
+cd $workDir
+
+# 2. Download der DEV-Version
+$zipUrl = "https://github.com/cezanne/usbip-win/releases/download/v0.3.6-dev/usbip-win-0.3.6-dev.zip"
+$zipFile = "$workDir\usbip.zip"
+
+if (!(Test-Path "$workDir\usbip.exe")) {
+    Write-Host "Lade USBIP-Client herunter..." -ForegroundColor Cyan
+    try {
+        Invoke-WebRequest -Uri $zipUrl -OutFile $zipFile -ErrorAction Stop
+        Write-Host "Entpacke Dateien..." -ForegroundColor Cyan
+        Expand-Archive -Path $zipFile -DestinationPath $workDir -Force
+        Remove-Item $zipFile
+    } catch {
+        Write-Host "Fehler beim Download: $($_.Exception.Message)" -ForegroundColor Red
+        pause
+        exit
+    }
+}
+
+# 3. Die usbip.exe finden (jetzt ohne zwingenden x64-Ordner)
+$exeFile = Get-ChildItem -Path $workDir -Filter "usbip.exe" -Recurse | Select-Object -First 1
+
+if (!$exeFile) {
+    Write-Host "FEHLER: usbip.exe wurde nicht gefunden!" -ForegroundColor Red
+    pause
+    exit
+}
+
+# In das Verzeichnis der .exe wechseln
+cd $exeFile.Directory.FullName
+Write-Host "Arbeitsverzeichnis: $(Get-Location)" -ForegroundColor Gray
 
 # 4. Treiber-Setup
 Write-Host "Installiere Treiber-Zertifikat..." -ForegroundColor Cyan
-$certFile = Get-ChildItem -Path $exeDir -Filter "usbip_test.pfx" | Select-Object -First 1
-if ($certFile) {
-    Import-Certificate -FilePath $certFile.FullName -CertStoreLocation Cert:\LocalMachine\TrustedPublisher -ErrorAction SilentlyContinue
+if (Test-Path ".\usbip_test.pfx") {
+    # Importiert das Zertifikat in den Speicher für vertrauenswürdige Herausgeber
+    Import-Certificate -FilePath .\usbip_test.pfx -CertStoreLocation Cert:\LocalMachine\TrustedPublisher -ErrorAction SilentlyContinue
 }
 
 Write-Host "Registriere virtuellen USB-Hub..." -ForegroundColor Cyan
+# Hier erscheint das Windows-Sicherheits-Popup
 .\usbip.exe install
+
+# 5. Verbinden
+Write-Host "Verbinde Kamera von 192.168.0.231 (Bus 1-1.2)..." -ForegroundColor Green
+.\usbip.exe attach -r 192.168.0.231 -b 1-1.2
+
+Write-Host "`nERFOLG: Die Kamera ist jetzt verbunden." -ForegroundColor Green
+Write-Host "WICHTIG: Dieses Fenster NICHT SCHLIESSEN, solange die Kamera genutzt wird!" -ForegroundColor Yellow
+pause
