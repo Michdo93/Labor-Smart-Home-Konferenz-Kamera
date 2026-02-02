@@ -1,4 +1,4 @@
-# 🎥 Anleitung: Top-Down Kamera verbinden
+# 🎥 Anleitung: Konferenz-Kamera verbinden
 
 In diesem Raum befindet sich eine Überkopf-Kamera für den Konferenztisch. Du kannst diese Kamera direkt über das Netzwerk mit deinem Laptop verbinden, sodass sie in **Zoom, Teams oder Webex** als lokale Webcam erscheint.
 
