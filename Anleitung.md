@@ -46,7 +46,19 @@ Wenn du fertig bist, drücke im Terminal einfach **STRG + C** oder schließe das
 
 **Projekt-Repository:** [GitHub: Michdo93/Labor-Smart-Home-Konferenz-Kamera](https://www.google.com/search?q=https://github.com/Michdo93/Labor-Smart-Home-Konferenz-Kamera)
 
----
-### Was ich noch für dich tun kann:
 
-Soll ich dir ein kurzes **HTML-Snippet** erstellen, falls du diese Befehle auf einer schicken internen Webseite mit "Klick-to-Copy"-Buttons anzeigen möchtest?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
