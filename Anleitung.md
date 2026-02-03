@@ -18,6 +18,21 @@ In diesem Raum befindet sich eine Überkopf-Kamera für den Konferenztisch. Du k
 
 ---
 
+## ⏺️ Kamera-Auswahl in Zoom
+
+Sobald das Skript erfolgreich läuft, erscheint ein neues Videogerät auf deinem Rechner.
+
+### Die richtige Kamera finden:
+
+Wähle in den Video-Einstellungen deines Konferenz-Tools folgendes Gerät aus:
+
+* **Name:** `Logitech Webcam C925e` (oder teils `Logitech BRIO` / `USB Video Device` / `USB Camera`)
+* **Qualität:** Die Kamera ist bereits serverseitig auf **720p (HD)** optimiert, um eine flüssige Übertragung zu gewährleisten.
+
+![Logitech Webcam](https://github.com/Michdo93/Labor-Smart-Home-Konferenz-Kamera/blob/main/zoom.png?raw=true)
+
+---
+
 ## ⚠️ Wichtige Hinweise für die Erstnutzung
 
 ### 🪟 Windows Nutzer
@@ -45,18 +60,6 @@ Wenn du fertig bist, drücke im Terminal einfach **STRG + C** oder schließe das
 ---
 
 **Projekt-Repository:** [GitHub: Michdo93/Labor-Smart-Home-Konferenz-Kamera](https://www.google.com/search?q=https://github.com/Michdo93/Labor-Smart-Home-Konferenz-Kamera)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
