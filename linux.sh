@@ -57,3 +57,13 @@ if [ $? -eq 0 ]; then
 else
     echo "Fehler beim Einbinden des Geräts."
 fi
+
+echo "Versuche Konferenz-Lautsprecher von 192.168.0.231 einzubinden..."
+usbip attach -r 192.168.0.231 -b 1-1.5
+
+if [ $? -eq 0 ]; then
+    echo "Konferenz-Lautsprecher erfolgreich verbunden!"
+else
+    echo "Fehler beim Einbinden des Geräts."
+fi
+
