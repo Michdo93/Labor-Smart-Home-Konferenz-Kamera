@@ -57,7 +57,11 @@ Write-Host "Registriere virtuellen USB-Hub..." -ForegroundColor Cyan
 # 5. Verbinden
 Write-Host "Verbinde Kamera von 192.168.0.231 (Bus 1-1.2)..." -ForegroundColor Green
 .\usbip.exe attach -r 192.168.0.231 -b 1-1.2
-
 Write-Host "`nERFOLG: Die Kamera ist jetzt verbunden." -ForegroundColor Green
+
+Write-Host "Verbinde Konferenz-Lautsprecher von 192.168.0.231 (Bus 1-1.5)..." -ForegroundColor Green
+.\usbip.exe attach -r 192.168.0.231 -b 1-1.5
+Write-Host "`nERFOLG: Der Konferenz-Lautsprecher ist jetzt verbunden." -ForegroundColor Green
+
 Write-Host "WICHTIG: Dieses Fenster NICHT SCHLIESSEN, solange die Kamera genutzt wird!" -ForegroundColor Yellow
 pause
