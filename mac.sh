@@ -44,7 +44,16 @@ echo -e "${CYAN}Verbinde Kamera von 192.168.0.231 (Bus 1-1.2)...${NC}"
 sudo usbip attach -r 192.168.0.231 -b 1-1.2
 
 if [ $? -eq 0 ]; then
-    echo -e "${GREEN}ERFOLG: Die Kamera sollte nun in Zoom verfügbar sein!${NC}"
+    echo -e "${GREEN}ERFOLG: Die Kamera sollte nun verfügbar sein!${NC}"
+else
+    echo -e "${RED}FEHLER: Verbindung fehlgeschlagen. Prüfe, ob die IP erreichbar ist.${NC}"
+fi
+
+echo -e "${CYAN}Verbinde Konferenz-Lautsprecher von 192.168.0.231 (Bus 1-1.5)...${NC}"
+sudo usbip attach -r 192.168.0.231 -b 1-1.5
+
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}ERFOLG: Der Konferenz-Lautsprecher sollte nun verfügbar sein!${NC}"
 else
     echo -e "${RED}FEHLER: Verbindung fehlgeschlagen. Prüfe, ob die IP erreichbar ist.${NC}"
 fi
